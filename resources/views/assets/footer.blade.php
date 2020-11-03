@@ -1,0 +1,1 @@
+<footer class="footer text-center">&copy; copyright OTIC. <?php echo date('Y');?></footer>
