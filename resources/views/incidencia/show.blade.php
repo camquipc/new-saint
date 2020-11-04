@@ -224,10 +224,10 @@
                                 @foreach ($observaciones as $observacion)
 
                                 @if($observacion->visto)
-                                <li class="media " onclick="updateNotificacion({{$observacion->id}}, st = null);"
+                                <li class="media " onclick="updateObservacion({{$observacion->id}}, st = null);"
                                     title="Click para marcar como visto!" style="cursor:pointer;">
                                     @else
-                                <li class="media alert-info" onclick=" updateNotificacion({{$observacion->id}},
+                                <li class="media alert-info" onclick=" updateObservacion({{$observacion->id}},
                                     st=null);" title="Click para marcar como visto!" style="cursor:pointer;">
                                     @endif
 

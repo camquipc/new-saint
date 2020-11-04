@@ -73,6 +73,9 @@ class PdfIncidenteController extends Controller
         $fecha = new Carbon();
 
         $sistema = Sistema::all()[0];
+
+        $newDirectorSAIT =  \DB::table('generales')
+        ->select('nombre','apellido')->get();
         
         $desde = $request->get('desde');
         $hasta = $request->get('hasta');
@@ -95,7 +98,7 @@ class PdfIncidenteController extends Controller
         }
 
 
-        $pdf = \PDF::loadView('reportes.incidencia.informe_tecnico_listado', compact('fecha','incidencias','sistema','desde','hasta'))
+        $pdf = \PDF::loadView('reportes.incidencia.informe_tecnico_listado', compact('fecha','incidencias','sistema','desde','hasta','newDirectorSAIT'))
         ->setPaper('Letter', 'portrait');
 
       

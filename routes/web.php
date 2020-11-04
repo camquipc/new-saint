@@ -68,19 +68,18 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('persona/{ci}', 'AjaxController@getPersonaAjax');
 
 
-    
-        Route::get('noti', 'AjaxController@getCountNoti');
+        //notificacion del sistema
+        Route::get('noti', 'AjaxController@getCountNotificacion');
         Route::get('notificaciones', 'AjaxController@getNotificaciones');
-        // FALTA EL CONTROLADOR DE ESTA ACTION
-
-        Route::get('observ', 'AjaxController@getCountObser');
+        Route::get('notificacion/update/{notificacion_id}', 'AjaxController@updateNotificacion');
+        
+        //observacion o comentarios del sistema
+        Route::get('observ', 'AjaxController@getCountObservacion');
         Route::get('observaciones', 'AjaxController@getObservaciones');
-
-        Route::get('notificacion/{observacion}/{incidencia_id}/{observacion_id}', 'AjaxController@setNotificacion');
-        Route::get('notificacion/update/{observacion_id}', 'AjaxController@updateNotificacion');
+        Route::get('observacion/{observacion}/{incidencia_id}/{observacion_id}', 'AjaxController@setObservacion');
+        Route::get('observacion/update/{observacion_id}', 'AjaxController@updateObservacion');
 
         //filtrar pdf
-
         Route::get('incidentes/filter/', 'AjaxController@getInformeTecnico');
         //Route::get('incidentes/filter/mes', 'Pdf\PdfIncidenteController@postInformeTecnico');
        // Route::get('incidentes/filter/{desde}/{hasta}', 'Pdf\PdfIncidenteController@postInformeTecnico');

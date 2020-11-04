@@ -297,71 +297,91 @@ function setInputTextToCamelCase() {
 
 
 
-//FUNCIONES DE LOS COMENTARIOS 
+//FUNCIONES DE LOS COMENTARIOS Y NOTIFICACIONES
+//OBSERCIONES = A COMENTARIOS
+//NOTIFICACIONES = ALERTAS
+
+//enviar comentario o repuesta al mensaje
+async function sendComentario(comentario, iid, id, uid) {
+
+    let observacion = document.getElementById(`observacion${comentario}`).value;
+    let incidencia_id = iid;
+    let _id = id;
+
+    let response = await fetch(`${URL}/api/observacion/${observacion}/${incidencia_id}/${_id}`);
+
+    let res = await response.json();
+
+    if (res) {
+        $('#staticBackdrop').modal('hide');
+        updateObservacion(_id);
+        getObservaciones();
+    }
+
+}
 
 async function getCountObservaciones() {
 
-    let notif = document.querySelector('#observacion');
+    let observ = document.querySelector('#observacion');
 
     let url = `${URL}/api/observ`;
     let response = await fetch(url);
-    let countN = await response.json();
+    let countObser = await response.json();
 
 
-    if (countN > 0) {
-        notif.style.visibility = 'visible';
-        notif.style.opacity = 1;
+    if (countObser > 0) {
+        observ.style.visibility = 'visible';
+        observ.style.opacity = 1;
 
-        notif.innerHTML = `
+        observ.innerHTML = `
                     <i class="fa fa-envelope mt-4" title="Mensajes"></i>
                     <span class="badge badge-danger alerta" style="color:#fff;margin-left:-4px;border-radius: 40%;">
-                    ${countN}
+                    ${countObser}
                     </span>
             `;
 
     } else {
-        notif.style.visibility = 'hidden';
+        observ.style.visibility = 'hidden';
     }
 }
 
-
 async function getObservaciones() {
 
-    let notif = document.querySelector('#observaciones');
+    let observ = document.querySelector('#observaciones');
 
     let url = ` ${URL}/api/observaciones`;
     let response = await fetch(url);
-    let notificaciones = await response.json();
+    let observaciones = await response.json();
 
-    if (notificaciones.length > 0) {
-        notif.style.display = 'block';
-        notif.innerHTML = notificaciones.filter(notificacion => notificacion.uid != document.getElementById('user_login_id').value).map(notificacion => {
+    if (observaciones.length > 0) {
+        observ.style.display = 'block';
+        observ.innerHTML = observaciones.filter(observacion => observacion.uid != document.getElementById('user_login_id').value).map(observacion => {
 
             return ` 
             <li class="media bg-light p-2">
                 <div class="media-body">
                 <h6 class="mt-0">
-                ${capitalize(notificacion.p_nombre)} ${capitalize(notificacion.p_apellido)}
-                ( ${notificacion.categoria} )
-                 <a class="btn-sm  pull-right " onClick="updateNotificacion('${notificacion.id}','cerrar');">
+                ${capitalize(observacion.p_nombre)} ${capitalize(observacion.p_apellido)}
+                ( ${observacion.categoria} )
+                 <a class="btn-sm  pull-right " onClick="updateObservacion('${observacion.id}','cerrar');">
                  <i class="fa fa-times-circle-o" title="Cerrar"></i>
                  </a>
 
                 </h6>
-                 <p class="m-0">${capitalize(notificacion.observacion)}</p>
+                 <p class="m-0">${capitalize(observacion.observacion)}</p>
 
                  <p class="text-right"> 
-                    <a class="btn-sm mb-2" data-toggle="collapse" href="#collapseExample${notificacion.id}">
+                    <a class="btn-sm mb-2" data-toggle="collapse" href="#collapseExample${observacion.id}">
                     Responader
                     </a>
                  </p>
-                 <div class="collapse " id="collapseExample${notificacion.id}">
+                 <div class="collapse " id="collapseExample${observacion.id}">
                     <div class="input-group">
-                        <input type="text" class="form-control form-control-sm " id="observacion${notificacion.id}">
+                        <input type="text" class="form-control form-control-sm " id="observacion${observacion.id}">
                         <div class="input-group-append">
                         <button class="btn btn-info  btn-sm p-2 " type="button" 
                         " style="border-radius: 0; margin-left: -2px;"
-                        onClick="sendComentario('${notificacion.id}','${notificacion.iid}','${notificacion.id}',${notificacion.uid});">
+                        onClick="sendComentario('${observacion.id}','${observacion.iid}','${observacion.id}',${observacion.uid});">
                         <i class="fa fa-paper-plane "></i>
                         </button>
                         </div>
@@ -375,13 +395,29 @@ async function getObservaciones() {
         }).join('');
 
     } else {
-        notif.style.display = 'hidden';
+        observ.style.display = 'hidden';
     }
 
 }
 
+async function updateObservacion(id, st = '') {
+
+    //actulizamos la observacion
+    let url = `${URL}/api/observacion/update/${id}`;
+    let response = await fetch(url);
+    let observacion = await response.json();
+
+    console.log(observacion)
+    if (observacion) {
+        if(st === 'cerrar') {
+            $('#staticBackdrop').modal('hide')  
+            getCountObservaciones()
+        }
+    }
+}
 
 
+//notificaciones del sistema
 async function getCountNotificaciones() {
 
     let notif = document.querySelector('#notificacion');
@@ -404,7 +440,6 @@ async function getCountNotificaciones() {
         notif.style.display = 'none';
     }
 }
-
 
 async function getNotificaciones() {
 
@@ -442,38 +477,14 @@ async function getNotificaciones() {
 
 }
 
-//enviar comentario o repuesta al mensaje
-//mejorar
-async function sendComentario(comentario, iid, id, uid) {
-
-    let observacion = document.getElementById(`observacion${comentario}`).value;
-    let incidencia_id = iid;
-    let _id = id;
-
-    //console.log(document.getElementById(`observacion${comentario}`).value, iid)
-
-    let response = await fetch(`${URL}/api/notificacion/${observacion}/${incidencia_id}/${_id}`);
-
-
-    let res = await response.json();
-
-    if (res) {
-        updateNotificacion(_id);
-        $('#staticBackdrop').modal('hide');
-        getNotificaciones();
-    }
-
-}
-
-//la de enviar
 async function updateNotificacion(id, st = '') {
 
-    //actulizamos la notificacion
+    //actulizamos la observacion
     let url = `${URL}/api/notificacion/update/${id}`;
     let response = await fetch(url);
     let notificacion = await response.json();
 
-    console.log(notificacion)
+    
     if (notificacion) {
         if(st === 'cerrar') {
             $('#staticBackdrop').modal('hide')  
@@ -482,7 +493,7 @@ async function updateNotificacion(id, st = '') {
     }
 }
 
-//FIN DE LAS FUNCIONES DE LOS COMENTARIOS 
+//**** */
 
 
 

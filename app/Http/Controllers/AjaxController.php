@@ -130,8 +130,8 @@ class AjaxController extends Controller
         return response()->json($motivos);
     }
 
-
-    public function getCountObser()
+    //FUNCIONES PARA LAS OBSERVCIONES DEL SISTEMA O COMENTARIO...
+    public function getCountObservacion()
     {
        // $notificaciones = Observacion::where('user_id', '!=' , Auth::user()->id)
         //->where('visto', '=' , false)->count();
@@ -172,7 +172,7 @@ class AjaxController extends Controller
         return response()->json($notificaciones);
     }
 
-    public function setNotificacion($observacion , $incidencia_id, $observacion_id)
+    public function setObservacion($observacion , $incidencia_id, $observacion_id)
     {
        
         $observacion = Observacion::create([
@@ -187,19 +187,20 @@ class AjaxController extends Controller
         
     }
 
-    public function updateNotificacion($observacion_id)
+    public function updateObservacion($observacion_id)
     {
-        $notificacion =   Observacion::find($observacion_id);
+        $observacion =   Observacion::find($observacion_id);
      
-        $notificacion->visto =  true;
+        $observacion->visto =  true;
 
-        $notificacion->save();
+        $observacion->save();
 
-        return response()->json($notificacion);
+        return response()->json($observacion);
     }
     
 
-    public function getCountNoti()
+    //FUNCIONES DEL SISTEMA PARA NOTIFICACIONES AL USUARIO...
+    public function getCountNotificacion()
     {
        // $notificaciones = Observacion::where('user_id', '!=' , Auth::user()->id)
         //->where('visto', '=' , false)->count();
@@ -242,9 +243,19 @@ class AjaxController extends Controller
         return response()->json($notificaciones);
     }
 
+    public function updateNotificacion($notificacion_id)
+    {
+        $notificacion =   Notificacion::find($notificacion_id);
+     
+        $notificacion->visto =  true;
+
+        $notificacion->save();
+
+        return response()->json($notificacion);
+    }
+
 
     //filter para pdf
-
     public function getInformeTecnicoDay()
     {
         /*$informes = Incidencia::where('fecha', '=', '05-03-2020')//Carbon::now('America/Caracas')->format('Y-m-d')
