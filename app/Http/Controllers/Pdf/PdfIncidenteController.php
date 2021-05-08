@@ -165,6 +165,63 @@ class PdfIncidenteController extends Controller
     }
 
 
+    public function getHistorial($desde, $hasta , $user)
+    {
+        $fecha = new Carbon();
+
+        $sistema = Sistema::all()[0];
+
+        $newDirectorSAIT =  \DB::table('generales')
+        ->select('nombre','apellido')->get();
+     
+        if($desde=='null' && $hasta=='null' && $user=='null'){
+            $historials = \DB::table('historials')
+                ->join('users', 'users.id', '=', 'historials.user_id')
+                ->select('historials.*','users.*')
+                ->orderBy('historials.id', 'DESC')
+                ->get();
+        }
+
+        if($user !== 'null' && $desde=='null' && $hasta=='null'){
+           
+            $historials = \DB::table('historials')
+                ->join('users', 'users.id', '=', 'historials.user_id')
+                ->select('historials.*','users.*')
+                ->where('users.id', $user)
+                ->orderBy('historials.id', 'DESC')
+                ->get();
+        }
+
+        if($desde !=='null' && $hasta !== 'null' && $user==='null' ){
+            $historials = \DB::table('historials')
+                ->join('users', 'users.id', '=', 'historials.user_id')
+                ->select('historials.*','users.*')
+                ->whereBetween('fecha', [$desde, $hasta])
+                ->orderBy('historials.id', 'DESC')
+                ->get();
+        }
+        
+        if($desde !=='null' && $hasta !=='null' && $user !=='null'){
+            //filtrar por fechas desde hasta
+            $historials = \DB::table('historials')
+                ->join('users', 'users.id', '=', 'historials.user_id')
+                ->select('historials.*','users.*')
+                ->whereBetween('fecha', [$desde, $hasta])
+                ->where('users.id', $user)
+                ->orderBy('historials.id', 'DESC')
+                ->get();   
+        }
+
+        $pdf = \PDF::loadView('reportes.historial.index', compact('fecha','historials','sistema','newDirectorSAIT'))
+        ->setPaper('Letter', 'portrait');
+
+    
+        $planilla = 'reporte_historial_'. $fecha->format('d-m-Y') . '.pdf';
+
+        return $pdf->download($planilla);  
+    }
+
+
     /*
 
         $departamentos =  \DB::table('users')

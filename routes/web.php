@@ -55,6 +55,9 @@ Route::group(['middleware' => ['auth']], function () {
     //historial de usuario>
     Route::get('historial', 'HistorialUsuarioController@gethistorial')->name('historials');
     Route::post('historial', 'HistorialUsuarioController@postHistorialAjax')->name('get_historial');
+    Route::post('historial/filter', 'HistorialUsuarioController@postHistorialFilterForDate')->name('historial_filter');
+
+    
     //RUTAS BASICA DE AYUDA
     Route::get('/ayuda', 'ConfigGeneralController@ayuda');
     Route::get('/desarrolladores', 'ConfigGeneralController@desarrolladores');
@@ -98,6 +101,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('incidente/por/departamento', 'Pdf\PdfIncidenteController@getIncidenteDepartamento');
         Route::get('incidente/por/{falla_id}', 'Pdf\PdfIncidenteController@getIncidentePorFalla');
         Route::get('incidentes/{condicion_id}/{estado_id}', 'Pdf\PdfIncidenteController@getIncidentesPorCondicionEstado');
+        Route::get('historial/{desde?}/{hasta?}/{user?}', 'Pdf\PdfIncidenteController@getHistorial');
 
         //DEPARTAMENTOS PDF
        // Route::get('departamentos', 'Pdf\PdfDepartamentoController@getDepartamentoTotalUsuario');

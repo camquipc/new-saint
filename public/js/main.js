@@ -2,6 +2,55 @@ moment.locale('es');
 // en
 //moment('2018-08-11').isBetween('2018-08-01', '2018-08-30'); 
 const URL = 'http://' + document.getElementById('hostname').value;
+const user_id = document.getElementById('user_login_id').value;
+
+//conection websockets
+const socket = io.connect('http://localhost:3000');
+
+//listado de incidentes en el table
+socket.on("incidencias", (data) =>{
+    console.log(data)
+    if (window.location.pathname === '/home') {
+     getDataTable(data);
+    }
+})
+
+//notificaciones por las incidencias
+socket.on("countNotificacion", async (data) => {
+   // console.log(data[0].count);
+    const countNotificacion = data[0].count;
+   
+    if(countNotificacion > 0){
+
+        let url = ` ${URL}/api/notificaciones`;
+        let response = await fetch(url);
+        let notificaciones = await response.json();
+        ///console.log(notificaciones.length)
+        if (notificaciones.length > 0) {
+            getCountNotificaciones(notificaciones.length);
+        }
+    }
+});
+
+//mensajes por las incidencias
+socket.on("countObservacion", async (data) => {
+    console.log(data[0].count);
+    const countObservacion = data[0].count;
+   
+    if(countObservacion > 0){
+
+        let url = ` ${URL}/api/observaciones`;
+        let response = await fetch(url);
+        let observaciones = await response.json();
+        console.log(observaciones);
+        if (observaciones.length > 0) {
+            getCountObservaciones(observaciones.length);
+        }
+    }
+
+});
+
+//**** websockets ****
 
 
 const capitalize = (str, allWords = false) => {
@@ -189,7 +238,6 @@ function verificarIncidente(id) {
 }
 
 
-
 //funcion generica de envio de formulario
 async function sendFormIncidente(url, method, form_, modal_ = '') {
 
@@ -208,11 +256,12 @@ async function sendFormIncidente(url, method, form_, modal_ = '') {
     try {
         let res = await response.json();
         $('.modal-close').modal('hide');
-
+        
+        console.log(res)
 
         if (res) {
             $('.modal-close').modal('hide');
-
+            socket.emit('add_action' , 'insert');
         } else {
             $('.modal-close').modal('hide');
         }
@@ -228,13 +277,6 @@ async function sendFormIncidente(url, method, form_, modal_ = '') {
 }
 
 
-
-
-
-function formValid(elem, reglas, mensajes) {
-
-}
-
 function validSelectRequired(sel, btn) {
     let select_ = document.getElementById(sel);
     let btn_ = document.getElementById(btn);
@@ -249,8 +291,6 @@ function validSelectRequired(sel, btn) {
         document.getElementById('selet_msj').innerHTML = "";
     }
 }
-
-
 
 
 function setOnliNumber(event) {
@@ -314,20 +354,20 @@ async function sendComentario(comentario, iid, id, uid) {
 
     if (res) {
         $('#staticBackdrop').modal('hide');
-        updateObservacion(_id);
+        updateObservacion(_id,'cerrar');
         getObservaciones();
     }
 
 }
 
-async function getCountObservaciones() {
+function getCountObservaciones(countObser) {
 
     let observ = document.querySelector('#observacion');
-
+  /*
     let url = `${URL}/api/observ`;
     let response = await fetch(url);
     let countObser = await response.json();
-
+     */
 
     if (countObser > 0) {
         observ.style.visibility = 'visible';
@@ -409,23 +449,26 @@ async function updateObservacion(id, st = '') {
 
     console.log(observacion)
     if (observacion) {
+
+        socket.emit('add_action' , 'update');
+
         if(st === 'cerrar') {
-            $('#staticBackdrop').modal('hide')  
-            getCountObservaciones()
+            $('#staticBackdrop').modal('hide'); 
+           // getCountObservaciones()
         }
     }
 }
 
 
 //notificaciones del sistema
-async function getCountNotificaciones() {
+async function getCountNotificaciones(countN) {
 
     let notif = document.querySelector('#notificacion');
-
+    /*
     let url = `${URL}/api/noti`;
     let response = await fetch(url);
     let countN = await response.json();
-
+    */
 
     if (countN > 0) {
         notif.style.display = 'block';
@@ -488,7 +531,7 @@ async function updateNotificacion(id, st = '') {
     if (notificacion) {
         if(st === 'cerrar') {
             $('#staticBackdrop').modal('hide')  
-            getCountNotificaciones()
+            //getCountNotificaciones()
         }
     }
 }
@@ -509,37 +552,33 @@ async function getMotivos(categoria_id) {
     }
 }
 
-
-async function getDataTable() {
-
+function getDataTable(incidentes) {
+    /*
     let url = 'api/incidentes';
     let response = await fetch(url);
     let data = await response.json();
-
+    */
     // let table_body = document.getElementById('body-table');
     let user_login = document.getElementById('user_login_tipo').value;
 
     //console.log(data)
 
     if (user_login == 1) {
-        renderAdmin(data, document.getElementById('body-table'));
+        renderAdmin(incidentes, document.getElementById('body-table'));
     }
 
     //sistema o técnico
     if (user_login == 2) {
-        renderSoporteTecnico(data, document.getElementById('body-table_soporte'));
+        renderSoporteTecnico(incidentes, document.getElementById('body-table_soporte'));
     }
     if (user_login == 4) {
-        renderBasico(data, document.getElementById('body-table'));
+        renderBasico(incidentes, document.getElementById('body-table'));
     }
     if (user_login == 3) {
-        renderUsuario(data, document.getElementById('body-table-usuario'));
+        renderUsuario(incidentes, document.getElementById('body-table-usuario'));
     }
 
 }
-
-
-
 
 function renderAdmin(incidentes = [], table_body = '') {
     if (!incidentes.length > 0) {
@@ -623,7 +662,6 @@ function renderBasico(incidentes = [], table_body = '') {
 
 }
 
-
 function renderSoporteTecnico(incidentes = [], table_body = '') {
 
     if (!incidentes.length > 0) {
@@ -671,7 +709,6 @@ function renderSoporteTecnico(incidentes = [], table_body = '') {
 
     //${moment(incidente.hora, "HH:mm:ss").format("hh:mm A")}
 }
-
 
 function renderUsuario(incidentes = [], table_body = '', user_login) {
 
@@ -722,8 +759,6 @@ function renderUsuario(incidentes = [], table_body = '', user_login) {
 }
 
 
-
-
 async function getPersona(ci) {
 
     let url = 'api/persona/' + ci.value;
@@ -749,9 +784,7 @@ function setUsuarioPassword(c) {
 
 }
 
-
 //filter de pdf
-
 async function getInformeTecnicoDay() {
 
     let url = `api/incidentes/filter/hoy`;
@@ -793,17 +826,9 @@ function renderTableFilterPdfList(data) {
 
 }
 
-
-
-
-
-
-
-
 function getModalNotificaciones() {
     $('#staticBackdrop').modal(getNotificaciones());
 }
-
 
 function getModalObservaciones() {
     $('#staticBackdrop2').modal(getObservaciones());
@@ -811,13 +836,8 @@ function getModalObservaciones() {
 
 
 window.addEventListener('DOMContentLoaded', () => {
-
-    if (window.location.pathname === '/home') {
-        getDataTable();
-    }
-
-    getCountNotificaciones();
-    getCountObservaciones();
+    //getCountNotificaciones();
+    //getCountObservaciones();
     setInputTextToCamelCase();
 });
 
@@ -845,15 +865,15 @@ function alerta() {
 
 //setInterval("alerta()", 900);
 
-
+/*
 setInterval(function () {
 
     if (window.location.pathname === '/home') {
         getDataTable();
     }
     // getDataTable();
-    getCountNotificaciones();
-    getCountObservaciones();
+    //getCountNotificaciones();
+    //getCountObservaciones();
 }, 10000);
 
-
+*/

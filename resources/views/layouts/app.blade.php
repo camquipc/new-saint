@@ -99,6 +99,7 @@
     <script src="{{ asset('js/jquery.validate.min.js')}}"></script>
     <script src="{{asset('js/additional-methods.min.js')}}"></script>
     <script src="{{asset('js/v1.js')}}"></script>
+    <script src="{{asset('js/socket.io.js')}}"></script>
     <script src="{{asset('js/main.js')}}"></script>
 
 </body>

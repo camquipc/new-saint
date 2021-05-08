@@ -27,6 +27,8 @@ class HistorialUsuarioController extends Controller
     {
         $users = User::all();
 
+        $query = "http://localhost:8000/pdf/historial/null/null/null";
+
         $historials = \DB::table('historials')
                 ->join('users', 'users.id', '=', 'historials.user_id')
                 ->select('historials.*','users.*')
@@ -34,16 +36,77 @@ class HistorialUsuarioController extends Controller
                 ->get();
 
 
-        return view('configuracion.historial.index', compact('historials','users'));
+        return view('configuracion.historial.index', compact('historials','users','query'));
     }
 
+    public function postHistorialFilterForDate(Request $request)
+    {
+        $users = User::all();
 
+        if(empty($request->desde) && empty($request->hasta) && empty($request->user)){
+            
+            $query = "http://localhost:8000/pdf/historial/null/null/null";
+
+            $historials = \DB::table('historials')
+                ->join('users', 'users.id', '=', 'historials.user_id')
+                ->select('historials.*','users.*')
+                ->orderBy('historials.id', 'DESC')
+                ->get();
+
+         // flash('Debe enviar las fechas desde y hasta para mejorar la busqueda!')->error();
+          return view('configuracion.historial.index', compact('historials','users' , 'query'));
+        }
+
+        if(!empty($request->user) && empty($request->desde) && empty($request->hasta)){
+            
+            //$query = ['desde' => '' , 'hasta' => '', 'user' => $request->user];
+            $query = "http://localhost:8000/pdf/historial/null/null/".$request->user;
+
+            $historials = \DB::table('historials')
+                ->join('users', 'users.id', '=', 'historials.user_id')
+                ->select('historials.*','users.*')
+                ->where('users.id', $request->user)
+                ->orderBy('historials.id', 'DESC')
+                ->get();
+
+          return view('configuracion.historial.index', compact('historials','users' , 'query'));
+        }
+
+        if(!empty($request->desde) && !empty($request->hasta) && empty($request->user) ){
+            
+            //$query = ['desde' => $request->desde  , 'hasta' => $request->hasta, 'user' => ''];
+            $query = "http://localhost:8000/pdf/historial/".$request->desde . "/" . $request->hasta ."/null";
+            $historials = \DB::table('historials')
+                ->join('users', 'users.id', '=', 'historials.user_id')
+                ->select('historials.*','users.*')
+                ->whereBetween('fecha', [$request->desde, $request->hasta])
+                ->orderBy('historials.id', 'DESC')
+                ->get();
+
+          return view('configuracion.historial.index', compact('historials','users' , 'query'));
+        }
+        
+        if(!empty($request->desde) && !empty($request->hasta) && !empty($request->user)){
+            //filtrar por fechas desde hasta
+            $historials = \DB::table('historials')
+                ->join('users', 'users.id', '=', 'historials.user_id')
+                ->select('historials.*','users.*')
+                ->whereBetween('fecha', [$request->desde, $request->hasta])
+                ->where('users.id', $request->user)
+                ->orderBy('historials.id', 'DESC')
+                ->get();
+            
+            $query = "http://localhost:8000/pdf/historial/".$request->desde . "/" . $request->hasta ."/" . $request->user . "";
+            //$query = ['desde' => $request->desde  , 'hasta' => $request->hasta, 'user' => $request->user];
+            return view('configuracion.historial.index', compact('historials','users' , 'query'));
+        }
+        
+    }
 
 
     public function postHistorialAjax(Request $request)
     {
         
-      
         if($request->input('hoy') == 1 ){
 
             $date = new Carbon();
