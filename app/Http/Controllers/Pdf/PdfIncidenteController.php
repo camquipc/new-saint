@@ -44,6 +44,35 @@ class PdfIncidenteController extends Controller
        /* return view('reportes.incidencia.incidente_por_departamento', compact('sistema'));*/
     }
 
+    public function postIncidenteForDate(Request $request)
+    {
+        $fecha = new Carbon();
+
+        $sistema = Sistema::all()[0];
+
+        $newDirectorSAIT =  \DB::table('generales')
+        ->select('nombre','apellido')->get();
+       
+        $incidencias = Incidencia::whereBetween('fecha', [$request->desde, $request->hasta])
+        ->orderBy('id', 'DESC')
+        ->get();
+
+        if(!count($incidencias) > 0 ){
+            flash('No hay resultado para esta busqueda!')->error();
+
+            return view('reportes.index');
+        }
+     
+        $pdf = \PDF::loadView('reportes.incidencia.incidente_lista', compact('fecha','incidencias', 'sistema','newDirectorSAIT'))
+        ->setPaper('Letter', 'portrait');
+
+        $planilla = 'incidentes_listado'. $fecha->format('d-m-Y') . '.pdf';
+
+        return $pdf->download($planilla); 
+
+       
+    }
+
 
     public function getInformeTecnico($id)
     {

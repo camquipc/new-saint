@@ -83,7 +83,7 @@
                                 <span class="fa fa-wrench" aria-hidden="true"></span>
                             </a>
                             @else
-                            <a class="btn-sm  pull-right " title="Imprimir Incidente">
+                            <a class="btn-sm  pull-right " title="Imprimir Incidente" href="{{url('/pdf/informetecnico', $incidencia->id)}}">
                                 <span class="fa fa-print" aria-hidden="true"></span>
                             </a>
                             @endif
@@ -139,7 +139,7 @@
                                 title="Ver detalles" style="color:black;">
                                 <i class="fa fa-eye" aria-hidden="true"></i>
                             </a>
-                            <a class="btn-sm  pull-right " title="Imprimir Incidente">
+                            <a class="btn-sm  pull-right " title="Imprimir Incidente" href="{{url('/pdf/informetecnico', $incidencia->id)}}">
                                 <span class="fa fa-print" aria-hidden="true"></span>
                             </a>
                             <img class="btn  btn-sm" src="{{asset('img/tecnico.png')}}"
@@ -209,7 +209,7 @@
                                 title="Ver detalles" style="color:black;">
                                 <i class="fa fa-eye" aria-hidden="true"></i>
                             </a>
-                            <a class="btn-sm  " title="Imprimir Incidente">
+                            <a class="btn-sm  " title="Imprimir Incidente" href="{{url('/pdf/informetecnico', $incidencia->id)}}"> 
                                 <span class="fa fa-print" aria-hidden="true"></span>
                             </a>
 
@@ -278,7 +278,7 @@
                                 onclick="getInputValueModalIncidente(this)">
                                 <span class="fa fa-commenting-o" aria-hidden="true"></span>
                             </a>
-                            <a class="btn-sm  " title="Imprimir Incidente">
+                            <a class="btn-sm  " title="Imprimir Incidente" href="{{url('/pdf/informetecnico', $incidencia->id)}}">
                                 <span class="fa fa-print" aria-hidden="true"></span>
                             </a>
 

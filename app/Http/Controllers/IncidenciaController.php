@@ -224,6 +224,25 @@ class IncidenciaController extends Controller
         return redirect('/incidencia/show/'.$request->input('incidencia_id') );
         
     }
+
+
+    public function getIncidenteForDate(Request $request)
+    {
+       
+        $query = "http://localhost:8000/pdf/incidentes/" . $request->desde . "/" . $request->hast . "";
+       
+        $incidencias = Incidencia::whereBetween('fecha', [$request->desde, $request->hasta])
+        ->orderBy('id', 'DESC')
+        ->get();
+
+        if(!count($incidencias) > 0 ){
+            flash('No hay resultado para esta busqueda!')->error();
+
+            return redirect()->back();
+        }
+
+        return view('reportes.index', compact('incidencias','query') );
+    }
 }
 
 

@@ -22,6 +22,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/incidencia/asignar', 'IncidenciaController@postAsignar');
     Route::post('/incidencia/observacion', 'IncidenciaController@postObservacion');
     Route::post('/incidencia/update/estado/', 'IncidenciaController@postIncidenciaEstadoUpdate');
+    // Route::post('/incidencia/filter', 'IncidenciaController@getIncidenteForDate');
 
     //configuracion generales
 
@@ -100,6 +101,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('info_tec_list', 'Pdf\PdfIncidenteController@getInformeTecnicoListado');
         Route::get('incidente/por/departamento', 'Pdf\PdfIncidenteController@getIncidenteDepartamento');
         Route::get('incidente/por/{falla_id}', 'Pdf\PdfIncidenteController@getIncidentePorFalla');
+        Route::post('incidencias', 'Pdf\PdfIncidenteController@postIncidenteForDate');
         Route::get('incidentes/{condicion_id}/{estado_id}', 'Pdf\PdfIncidenteController@getIncidentesPorCondicionEstado');
         Route::get('historial/{desde?}/{hasta?}/{user?}', 'Pdf\PdfIncidenteController@getHistorial');
 
