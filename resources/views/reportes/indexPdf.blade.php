@@ -47,9 +47,10 @@
         <!--informe tecnico-->
         <div class="tab-pane fade" id="nav-informe-tecnico" role="tabpanel">
           <br>
-          <form class="form-inline pull-right">
+          <form class="form-inline pull-right" action="pdf/informe_tecnico" method="POST">
+          {{ csrf_field() }}
             <p class="mt-3 mr-3"> Filtro de busqueda </p>
-            <input type="test" class="form-control form-control-sm mr-2" style="width:170px;" placeholder="Codigo incidente">
+            <input type="test" name="codigo_" class="form-control form-control-sm mr-2" style="width:170px;" placeholder="Codigo incidente">
             <button type="submit" class="btn-info  btn-sm pt-1 pb-1 pl-3 pr-3">
               <i class="fa fa-search-plus" aria-hidden="true" style="font-size:16px;"></i>
             </button>
@@ -59,41 +60,46 @@
 
         <!--grafico-->
         <div class="tab-pane fade" id="nav-grafico" role="tabpanel">
-          <br>
-          <form class="form-inline pull-right">
-            <p class="mt-3 mr-3"> Filtro de busqueda </p>
-            <input type="date" class="form-control form-control-sm mr-2" style="width:170px;" placeholder="Desde">
-            <input type="date" class="form-control form-control-sm mr-2" style="width:170px;" placeholder="Hasta">
-            <button type="submit" class="btn-info  btn-sm pt-1 pb-1 pl-3 pr-3">
-              <i class="fa fa-search-plus" aria-hidden="true" style="font-size:16px;"></i>
-            </button>
-          </form>
+            <br>
+            <form class="form-inline pull-right">
+              <p class="mt-3 mr-3"> Filtro de busqueda </p>
+              <input type="date" class="form-control form-control-sm mr-2" style="width:170px;" placeholder="Desde">
+              <input type="date" class="form-control form-control-sm mr-2" style="width:170px;" placeholder="Hasta">
+              <button type="submit" class="btn-info  btn-sm pt-1 pb-1 pl-3 pr-3">
+                <i class="fa fa-search-plus" aria-hidden="true" style="font-size:16px;"></i>
+              </button>
+            </form>
 
-          <br><br>
-          <div class="row">
-            <div class="col-md-6">
-              <div class="card ">
-                <div class="header">
-                  <h4 class="title">Graficos</h4>
-                  <p class="category"></p>
+              <br><br>
+           
+              <div class="col-lg-12">
+              @if(isset($chart2) && isset($chart3))
+                <div class="row">
+                    <div class="col-md-8">
+                      <div class="card ">
+                          <div class="header">
+                              <h4 class="title"></h4>
+                              <p class="category"></p>
+                          </div>
+                          <div class="content">
+                              {!! $chart2->html() !!}
+                          </div>
+                      </div>
+                  </div>
+                  <div class="col-md-4">
+                      <div class="card ">
+                          <div class="header">
+                              <h4 class="title"></h4>
+                              <p class="category"></p>
+                          </div>
+                          <div class="content">
+                              {!! $chart3->html() !!}
+                          </div>
+                      </div>
+                  </div>
                 </div>
-                <div class="content">
-                  Graficos
-                </div>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="card ">
-                <div class="header">
-                  <h4 class="title">Graficos</h4>
-                  <p class="category"></p>
-                </div>
-                <div class="content">
-                  Graficos
-                </div>
-              </div>
-            </div>
-          </div>
+              @endif
+             </div>
         </div>
 
       </div>
@@ -101,4 +107,10 @@
   </div>
 </div>
 
+
+{!! Charts::scripts() !!}
+@if(isset($chart2) && isset($chart3))
+{!! $chart2->script() !!}
+{!! $chart3->script() !!}
+@endif
 @endsection

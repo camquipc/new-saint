@@ -9,7 +9,8 @@ use App\Incidencia;
 use App\Observacion;
 use Carbon\Carbon;
 use App\Sistema;
-
+use App\Departamento;
+use App\Categoria;
 
 class PdfIncidenteController extends Controller
 {
@@ -137,12 +138,45 @@ class PdfIncidenteController extends Controller
     }
 
 
-    
-    public function getIncidenteDepartamento()
+    public function postInformeTecnico(Request $request)
     {
         $fecha = new Carbon();
 
         $sistema = Sistema::all()[0];
+        
+        $inc = Incidencia::where('codigo', '=',$request->codigo_)->get();
+
+
+       if(!count($inc) > 0 ){
+            flash('No hay resultado para esta busqueda!')->error();
+
+            return view('reportes.index');
+        }
+        $incidencia = $inc[0];
+        $observaciones = Observacion::where('incidencia_id' , '=' , $incidencia->id)->get();
+     
+        $pdf = \PDF::loadView('reportes.incidencia.informe_tecnico', compact('fecha','incidencia','observaciones','sistema'))
+        ->setPaper('Letter', 'portrait');
+
+      
+
+        $planilla = 'informe_tecnico_' . $incidencia->codigo .'_'. $fecha->format('d-m-Y') . '.pdf';
+
+        return $pdf->download($planilla);   
+
+        //return view('reportes.incidencia.incidente', compact('fecha','incidencia','observaciones'));
+    }
+
+
+    
+    public function getDepartamentolistsWithUser()
+    {
+        $fecha = new Carbon();
+
+        $sistema = Sistema::all()[0];
+
+        $newDirectorSAIT =  \DB::table('generales')
+        ->select('nombre','apellido')->get();
         
      
         $departamentos =  \DB::table('users')
@@ -151,7 +185,7 @@ class PdfIncidenteController extends Controller
         ->groupBy('departamentos.nombre')
         ->get();
 
-        $pdf = \PDF::loadView('reportes.incidencia.incidente_por_departamento', compact('fecha','departamentos','sistema'))
+        $pdf = \PDF::loadView('reportes.incidencia.incidente_por_departamentos', compact('fecha','departamentos','sistema','newDirectorSAIT'))
         ->setPaper('Letter', 'portrait');
 
       
@@ -160,6 +194,52 @@ class PdfIncidenteController extends Controller
 
         return $pdf->download($planilla);   
     }
+
+
+    public function getDepartamentolists()
+    {
+        $fecha = new Carbon();
+
+        $sistema = Sistema::all()[0];
+
+        $newDirectorSAIT =  \DB::table('generales')
+        ->select('nombre','apellido')->get();
+        
+     
+        $departamentos = Departamento::all() ;
+
+        $pdf = \PDF::loadView('reportes.incidencia.incidente_por_departamentos', compact('fecha','departamentos','sistema','newDirectorSAIT'))
+        ->setPaper('Letter', 'portrait');
+
+      
+
+        $planilla = 'incidente_por_departamento_'. $fecha->format('d-m-Y') . '.pdf';
+
+        return $pdf->download($planilla);   
+    }
+
+    public function getDivisioneslists()
+    {
+        $fecha = new Carbon();
+
+        $sistema = Sistema::all()[0];
+
+        $newDirectorSAIT =  \DB::table('generales')
+        ->select('nombre','apellido')->get();
+        
+     
+        $otic_departamentos = Categoria::all();
+
+        $pdf = \PDF::loadView('reportes.incidencia.divisiones_lista', compact('fecha','otic_departamentos','sistema','newDirectorSAIT'))
+        ->setPaper('Letter', 'portrait');
+
+      
+
+        $planilla = 'incidente_por_departamento_'. $fecha->format('d-m-Y') . '.pdf';
+
+        return $pdf->download($planilla);   
+    }
+
 
 
     public function getIncidentePorFalla($falla_id)

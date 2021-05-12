@@ -99,11 +99,15 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('incidente/{id}', 'Pdf\PdfIncidenteController@getIncidente');
         Route::get('informetecnico/{id}', 'Pdf\PdfIncidenteController@getInformeTecnico');
         Route::post('info_tec_list', 'Pdf\PdfIncidenteController@getInformeTecnicoListado');
-        Route::get('incidente/por/departamento', 'Pdf\PdfIncidenteController@getIncidenteDepartamento');
+        Route::get('departamentos', 'Pdf\PdfIncidenteController@getDepartamentolists');
+        Route::get('divisiones', 'Pdf\PdfIncidenteController@getDivisioneslists');
+
+        
         Route::get('incidente/por/{falla_id}', 'Pdf\PdfIncidenteController@getIncidentePorFalla');
         Route::post('incidencias', 'Pdf\PdfIncidenteController@postIncidenteForDate');
         Route::get('incidentes/{condicion_id}/{estado_id}', 'Pdf\PdfIncidenteController@getIncidentesPorCondicionEstado');
         Route::get('historial/{desde?}/{hasta?}/{user?}', 'Pdf\PdfIncidenteController@getHistorial');
+        Route::post('informe_tecnico', 'Pdf\PdfIncidenteController@postInformeTecnico');
 
         //DEPARTAMENTOS PDF
        // Route::get('departamentos', 'Pdf\PdfDepartamentoController@getDepartamentoTotalUsuario');

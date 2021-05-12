@@ -11,6 +11,10 @@
 			class="btn-sm  pull-right " title="Nuevo Departamento">
 			<span class="fa fa-plus-circle" aria-hidden="true"></span>
 		</a>
+		<a class="btn-sm  pull-right " style="font-size: 18px" title="Imprimir listado"
+           href="{{url('/pdf/divisiones')}}" style="color:black;">
+           <span class="fa fa-print" aria-hidden="true"></span>
+         </a>
 	</div>
 </div>
 

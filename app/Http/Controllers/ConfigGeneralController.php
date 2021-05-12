@@ -15,6 +15,7 @@ use App\Historial;
 
 use App\User;
 
+
 use Auth;
 
 use Carbon\Carbon;
@@ -26,6 +27,10 @@ use App\Estado;
 use App\Categoria;
 
 use App\Motivo;
+
+use Charts;
+use DB;
+
 
 class ConfigGeneralController extends Controller
 {
@@ -62,7 +67,6 @@ class ConfigGeneralController extends Controller
         $directivo = \DB::table('generales')
                 ->select('nombre','apellido','id')
                 ->get();
-
 
         return view('configuracion.index', 
         compact('departamentos', 'sistema','historials','users','otic_departamentos','motivos','estados','directivo'));
@@ -153,8 +157,33 @@ class ConfigGeneralController extends Controller
 
         $newDirectorSAIT =  \DB::table('generales')
         ->select('nombre','apellido')->get();
+    
+        $motivos = Motivo::pluck('nombre', 'id');
+
+        $categorias = Categoria::all();
+
+        $users = User::select('users.*')
+        ->join('categorias', 'users.categoria_id', '=', 'categorias.id')
+        ->where('categorias.nombre' , 'not ilike' , 'ninguno')
+        ->get();
+
+        $des = Departamento::pluck('nombre');
+
+        $chart2  = Charts::create('bar', 'highcharts')
+        ->elementLabel("Incidente")
+        ->title("Incidentes por departamento (Anual)")
+        ->labels($des)
+        ->values([0,0,1,5,0,2])
+        ->responsive(true);
+
+        $chart3  = Charts::create('area', 'highcharts')
+        ->elementLabel("Incidente")
+        ->title("Incidentes por departamento (Anual)")
+        ->labels($des)
+        ->values([0,0,1,5,0,2])
+        ->responsive(true);
         
-        return view('reportes.index', compact('incidencias','newDirectorSAIT'));
+        return view('reportes.index', compact('incidencias','newDirectorSAIT','chart2','chart3'));
     
     }
 

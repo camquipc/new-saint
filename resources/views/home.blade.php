@@ -19,7 +19,7 @@
 @endif
 
 @if(Auth::user()->tipo == '1')
-<!--@include('assets.dashboard_admin')-->
+@include('assets.dashboard_admin')
 @include('incidencia.partias.create')
 @include('incidencia.partias.createAterceros')
 @endif

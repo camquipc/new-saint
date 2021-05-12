@@ -100,6 +100,7 @@ class HomeController extends Controller
              //estado 1 atendida , 2 solucionado, 3 en espera...
             $incidenteEs = Incidencia::where(DB::raw("extract(MONTH FROM fecha_asignada)"), Carbon::now()->format('m'))
              ->where('estado_id','=', 3)->count(); //estado pendiente por atender
+
         }
 
         if(Auth::user()->tipo == 3){
@@ -144,15 +145,3 @@ class HomeController extends Controller
 
 
 
-
-/*
-
-$departamentos =  \DB::table('users')
-        ->join('departamentos', 'departamentos.id', '=', 'users.departamento_id')
-        ->join('departamentos', 'departamentos.id', '=', 'users.departamento_id')
-        ->select('departamentos.nombre', \DB::raw( 'count (*) as usuarios' ))
-        ->groupBy('departamentos.nombre')
-        ->get();
-*/
-
-     //   /etc/apt/sources.list.d/php.list:1 y /etc/apt/sources.list.d/php7.list:1
